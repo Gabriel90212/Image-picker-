@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Image Picker</title>
+   <style>
+       .image-container {
+           position: relative;
+           width: 500px;
+           height: 500px;
+           border: 1px solid black;
+       }
+       .image {
+           position: absolute;
+           top: 50%;
+           left: 50%;
+           transform: translate(-50%, -50%);
+           max-width: 100%;
+           max-height: 100%;
+           cursor: move;
+       }
+     .image-grid{
+		 display: flex;
+		 width: 100px;
+		 height: 100px;
+     }
+   </style>
+</head>
+<body>
+   <div class="image-container" ondrop="drop(event)" ondragover="allowDrop(event)">
+       <img id="image" class="image" src=img/1.JPG draggable="true" ondragstart="drag(event)">
+   </div>
+   <div class="image-grid">
+       <img src="https://picsum.photos/200" alt="image 2" onclick="changeImage(this)">
+       <img src="https://picsum.photos/201" alt="image 3" onclick="changeImage(this)">
+       <img src="https://picsum.photos/202" alt="image 4" onclick="changeImage(this)">
+       <img src="https://picsum.photos/203" alt="image 5" onclick="changeImage(this)">
+   </div>
+   <script>
+       var image = document.getElementById("image");
+       var container = document.querySelector(".image-container");
+
+
+       var lastX = 0;
+       var lastY = 0;
+
+       function allowDrop(event) {
+           event.preventDefault();
+       }
+
+       function drag(event) {
+           event.dataTransfer.setData("text", event.target.id);
+       }
+
+       function drop(event) {
+           event.preventDefault();
+           var data = event.dataTransfer.getData("text");
+           var offsetX = event.clientX - container.getBoundingClientRect().left;
+           var offsetY = event.clientY - container.getBoundingClientRect().top;
+           var width = image.width;
+           var height = image.height;
+           var left = offsetX - width / 2;
+           var top = offsetY - height / 2;
+           image.style.left = left + "px";
+           image.style.top = top + "px";
+       }
+
+       function changeImage(image) {
+           var shirtImage = document.getElementById("image");
+           shirtImage.src = image.src;
+       }
+const imageContainer = document.querySelector(".image-container");
+
+	   
+		let isResizing = false;
+		let initialDistance = 0;
+		
+		imageContainer.addEventListener("touchstart", (event) => {
+		  if (event.touches.length === 2) {
+		    event.preventDefault();
+		    isResizing = true;
+		
+		    const touch1 = event.touches[0];
+		    const touch2 = event.touches[1];
+		    initialDistance = calculateDistance(touch1, touch2);
+		  }
+		});
+		
+		imageContainer.addEventListener("touchmove", (event) => {
+		  if (isResizing) {
+		    event.preventDefault();
+		
+		    const touch1 = event.touches[0];
+		    const touch2 = event.touches[1];
+		    const currentDistance = calculateDistance(touch1, touch2);
+		
+		    const distanceChange = currentDistance - initialDistance;
+		    const scaleFactor = 1 + (distanceChange / 100); // Adjust sensitivity as needed
+		
+		    image.style.width = (image.offsetWidth * scaleFactor) + "px";
+		    image.style.height = (image.offsetHeight * scaleFactor) + "px";
+		  }
+		});
+		
+		imageContainer.addEventListener("touchend", () => {
+		  isResizing = false;
+		});
+		
+		function calculateDistance(touch1, touch2) {
+		  const xDiff = touch1.clientX - touch2.clientX;
+		  const yDiff = touch1.clientY - touch2.clientY;
+		  return Math.sqrt(Math.pow(xDiff, 2) + Math.pow(yDiff, 2));
+		}
+		
+   </script>
+</body>
+</html>
